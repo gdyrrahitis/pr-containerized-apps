@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Data.SqlClient;
+using Catalog.API.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace Catalog.API.Controllers
 {
@@ -10,11 +11,57 @@ namespace Catalog.API.Controllers
     [ApiController]
     public class CatalogController : ControllerBase
     {
-        // GET api/values
+        private readonly EnvironmentConfiguration _configuration;
+
+        public CatalogController(IOptions<EnvironmentConfiguration> options) => _configuration = options.Value;
+
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public IActionResult Get()
         {
-            return new string[] { "item1", "item2" };
+            using (var connection = new SqlConnection(_configuration.ConnectionString))
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "SELECT [c].[Id], [c].[CatalogItemId], [c].[Name], [c].[Price] FROM [dbo].[Catalog] AS [c]";
+                    var reader = command.ExecuteReader();
+                    var list = new List<CatalogItem>();
+                    while (reader.Read())
+                    {
+                        var item = new CatalogItem
+                        {
+                            Id = (int)reader["Id"],
+                            CatalogItemId = Guid.Parse(reader["CatalogItemId"].ToString()),
+                            Name = reader["Name"].ToString(),
+                            Price = (decimal)reader["Price"]
+                        };
+                        list.Add(item);
+                    }
+
+                    connection.Close();
+                    return Ok(list);
+                }
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Post([FromBody] CatalogItem item)
+        {
+            using (var connection = new SqlConnection(_configuration.ConnectionString))
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "INSERT INTO [dbo].[Catalog] (CatalogItemId, Name, Price) VALUES (@CatalogITemId, @Name, @Price)";
+                    command.Parameters.Add("@CatalogItemId", System.Data.SqlDbType.UniqueIdentifier).Value = Guid.NewGuid();
+                    command.Parameters.Add("@Name", System.Data.SqlDbType.VarChar).Value = item.Name;
+                    command.Parameters.Add("@Price", System.Data.SqlDbType.Decimal).Value = item.Price;
+
+                    var result = command.ExecuteNonQuery();
+                    connection.Close();
+                    return result > -1 ? (IActionResult)Ok() : BadRequest();
+                }
+            }
         }
     }
 }
