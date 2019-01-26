@@ -12,8 +12,8 @@ services:
       - "51705:80"
       - "44372:443"
     volumes:
-      - ${HOME}/.aspnet/https:/root/.aspnet/https/
-      - ${HOME}/.microsoft/usersecrets/:/root/.microsoft/usersecrets
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
   catalog.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -24,8 +24,8 @@ services:
       - "51712:80"
       - "44336:443"
     volumes:
-      - ${HOME}/.aspnet/https:/root/.aspnet/https/
-      - ${HOME}/.microsoft/usersecrets/:/root/.microsoft/usersecrets
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
   sql.data:
     environment:
       - SA_PASSWORD=Pass@word
@@ -34,10 +34,10 @@ services:
       - "5433:1433"
     volumes:
       - ./Scripts:/docker-entrypoint-initdb.d
-  # document.data:
-  #   restart: always
-  #   environment:
-  #     - MONGO_INITDB_ROOT_USERNAME=root
-  #     - MONGO_INITDB_ROOT_PASSWORD=example
-  #   ports:
-  #     - "27018:27018"
+  document.data:
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+    ports:
+      - "27017:27017"

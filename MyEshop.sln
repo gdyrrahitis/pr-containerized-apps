@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{1EF178C9
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integration", "Integration", "{70E838A7-0081-413E-A050-8BD1C5C1BD1E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalog.API.Integration.Tests", "..\Catalog.API.Integration.Tests\Catalog.API.Integration.Tests.csproj", "{3FE9DE9A-200F-4DDD-8F39-89BD0A57083E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalog.API.Integration.Tests", "Catalog.API.Integration.Tests\Catalog.API.Integration.Tests.csproj", "{3FE9DE9A-200F-4DDD-8F39-89BD0A57083E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orders.API.Integration.Tests", "Orders.API.Integration.Tests\Orders.API.Integration.Tests.csproj", "{E99385C0-DA1A-4B82-933C-5E4C28F705E5}"
 EndProject
