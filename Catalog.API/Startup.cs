@@ -1,5 +1,4 @@
-﻿using Catalog.API.Data;
-using Catalog.API.Models;
+﻿using Catalog.API.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -34,7 +33,6 @@ namespace Catalog.API
                 app.UseHsts();
             }
 
-            app.SeedData();
             app.UseHttpsRedirection();
             app.UseMvc();
         }

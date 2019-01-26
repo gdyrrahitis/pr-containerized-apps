@@ -32,6 +32,8 @@ services:
       - ACCEPT_EULA=Y
     ports:
       - "5433:1433"
+    volumes:
+      - ./Scripts:/docker-entrypoint-initdb.d
   document.data:
     restart: always
     environment:
