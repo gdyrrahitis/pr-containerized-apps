@@ -1,17 +1,17 @@
 version: '3.4'
 
 services:
-  orders.api:
-    image: ${DOCKER_REGISTRY}ordersapi
-    build:
-      context: .
-      dockerfile: Orders.API/Dockerfile
-    depends_on:
-      - catalog.api
-      # - document.data
-
+#  orders.api:
+#    image: ordersapi
+#    build:
+#      context: .
+#      dockerfile: Orders.API/Dockerfile
+#    depends_on:
+#      - catalog.api
+#      # - document.data
+#
   catalog.api:
-    image: ${DOCKER_REGISTRY}catalogapi
+    image: catalogapi
     build:
       context: .
       dockerfile: Catalog.API/Dockerfile
@@ -19,7 +19,10 @@ services:
       - sql.data
 
   sql.data:
-    image: microsoft/mssql-server-linux:2017-latest
+    image: mssqldb
+    build:
+      context: .
+      dockerfile: db/Dockerfile
 
   # document.data:
   #   image: mongo

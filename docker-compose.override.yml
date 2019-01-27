@@ -1,31 +1,32 @@
 version: '3.4'
 
 services:
-  orders.api:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443;http://+:80
-      - ASPNETCORE_HTTPS_PORT=44372
-      - MongoConnectionString=${MYESHOP_ORDERS_API_DB:-mongodb://localhost:27017}
-      - MongoDatabase=OrderingDb
-    ports:
-      - "51705:80"
-      - "44372:443"
-    volumes:
-      - ${HOME}/.aspnet/https:/root/.aspnet/https/
-      - ${HOME}/.microsoft/usersecrets/:/root/.microsoft/usersecrets
+#  orders.api:
+#    environment:
+#      - ASPNETCORE_ENVIRONMENT=Development
+#      - ASPNETCORE_URLS=https://+:443;http://+:80
+#      - ASPNETCORE_HTTPS_PORT=44372
+#      - MongoConnectionString=${MYESHOP_ORDERS_API_DB:-mongodb://localhost:27017}
+#      - MongoDatabase=OrderingDb
+#    ports:
+#      - "51705:80"
+#      - "44372:443"
+#    volumes:
+#      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+#      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
   catalog.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443;http://+:80
       - ASPNETCORE_HTTPS_PORT=44336
-      - ConnectionString=${MYESHOP_CATALOG_API_DB:-Server=localhost,5433;Database=Catalog;User Id=sa;Password=Pass@word}
+      - ConnectionString=${MYESHOP_CATALOG_API_DB:-Server=sql.data;Database=CatalogDb;User=sa;Password=Pass@word}
     ports:
       - "51712:80"
       - "44336:443"
     volumes:
-      - ${HOME}/.aspnet/https:/root/.aspnet/https/
-      - ${HOME}/.microsoft/usersecrets/:/root/.microsoft/usersecrets
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+
   sql.data:
     environment:
       - SA_PASSWORD=Pass@word
@@ -33,7 +34,10 @@ services:
     ports:
       - "5433:1433"
     volumes:
-      - ./Scripts:/docker-entrypoint-initdb.d
+      - /var/opt/mssql
+      - ./db/sql:/usr/config
+    tty: true
+
   # document.data:
   #   restart: always
   #   environment:

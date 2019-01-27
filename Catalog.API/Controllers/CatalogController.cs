@@ -16,7 +16,6 @@ namespace Catalog.API.Controllers
         public CatalogController(IOptions<EnvironmentConfiguration> options) => _configuration = options.Value;
 
         [HttpGet]
-        [Route("")]
         public IActionResult Get()
         {
             using (var connection = new SqlConnection(_configuration.ConnectionString))
@@ -46,7 +45,6 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost]
-        [Route("")]
         public IActionResult Post([FromBody] CatalogItem item)
         {
             using (var connection = new SqlConnection(_configuration.ConnectionString))
