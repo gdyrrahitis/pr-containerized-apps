@@ -2,14 +2,18 @@ const orders = [
     {
         "total": 90.98,
         "items": 2,
+        "orderStatus": "submitted",
+        "buyerName": "George Dyrrachitis",
         "orderItems": [
             {
                 "item": "Amazon Echo",
-                "price": 79.99
+                "price": 79.99,
+                "units": 1
             },
             {
                 "item": "keyboard",
-                "price": 10.99
+                "price": 10.99,
+                "units": 1
             }
         ]
     }

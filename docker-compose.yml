@@ -1,6 +1,21 @@
 version: '3.4'
 
 services:
+  # Event bus
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+
+  # Data storage
+  document.data:
+    image: mongo
+
+  sql.data:
+    image: mssqldb
+    build:
+      context: .
+      dockerfile: db/Dockerfile
+
+  # APIs
   orders.api:
     image: ordersapi
     build:
@@ -8,23 +23,13 @@ services:
       dockerfile: Orders.API/Dockerfile
     depends_on: 
       - document.data
+      - rabbitmq
 
-#  catalog.api:
-#    image: catalogapi
-#    build:
-#      context: .
-#      dockerfile: Catalog.API/Dockerfile
-#    depends_on:
-#      - sql.data
-
-#  sql.data:
-#    image: mssqldb
-#    build:
-#      context: .
-#      dockerfile: db/Dockerfile
-
-  document.data:
-    image: mongo
-#    build:
-#      context: .
-#      dockerfile: documentdb/Dockerfile
+  catalog.api:
+    image: catalogapi
+    build:
+      context: .
+      dockerfile: Catalog.API/Dockerfile
+    depends_on:
+      - sql.data
+      - rabbitmq

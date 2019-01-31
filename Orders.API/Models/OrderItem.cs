@@ -9,5 +9,8 @@ namespace Orders.API.Models
 
         [BsonElement("price")]
         public decimal Price { get; set; }
+
+        [BsonElement("units")]
+        public int Units { get; set; }
     }
 }

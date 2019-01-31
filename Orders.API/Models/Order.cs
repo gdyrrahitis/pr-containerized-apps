@@ -18,5 +18,11 @@ namespace Orders.API.Models
 
         [BsonElement("orderItems")]
         public IEnumerable<OrderItem> OrderItems { get; set; }
+
+        [BsonElement("orderStatus")]
+        public string OrderStatus { get; set; }
+
+        [BsonElement("buyerName")]
+        public string BuyerName { get; set; }
     }
 }

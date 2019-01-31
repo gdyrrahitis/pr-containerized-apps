@@ -1,43 +1,21 @@
 version: '3.4'
 
 services:
-  orders.api:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=${MYESHOP_ORDERS_API_ASPNETCORE_ENV:-Development}
-      - ASPNETCORE_URLS=https://+:443;http://+:80
-      - ASPNETCORE_HTTPS_PORT=44372
-      - ConnectionString=${MYESHOP_ORDERS_API_DB:-mongodb://document.data}
-      - DatabaseName=${MYESHOP_ORDERS_API_DATABASENAME:-ordersDb}
-      - CollectionName=${MYESHOP_ORDERS_API_COLLECTIONNAME:-ordersCollection}
+  rabbitmq:
     ports:
-      - "51705:80"
-      - "44372:443"
-    volumes:
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-#  catalog.api:
-#    environment:
-#      - ASPNETCORE_ENVIRONMENT=${MYESHOP_CATALOG_API_ASPNETCORE_ENV:-Development}
-#      - ASPNETCORE_URLS=https://+:443;http://+:80
-#      - ASPNETCORE_HTTPS_PORT=44336
-#      - ConnectionString=${MYESHOP_CATALOG_API_DB:-Server=sql.data;Database=CatalogDb;User=sa;Password=Pass@word}
-#    ports:
-#      - "51712:80"
-#      - "44336:443"
-#    volumes:
-#      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
-#      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - "15692:15672"
+      - "5692:5672"
 
-#  sql.data:
-#    environment:
-#      - SA_PASSWORD=Pass@word
-#      - ACCEPT_EULA=Y
-#    ports:
-#      - "5433:1433"
-#    volumes:
-#      - /var/opt/mssql
-#      - ./db/sql:/usr/config
-#    tty: true
+  sql.data:
+    environment:
+      - SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y
+    ports:
+      - "5433:1433"
+    volumes:
+      - /var/opt/mssql
+      - ./db/sql:/usr/config
+    tty: true
 
   document.data:
     restart: always
@@ -48,3 +26,33 @@ services:
       - MONGO_INITDB_DATABASE=ordersDb
     ports:
       - "27019:27017"
+
+  orders.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${MYESHOP_ORDERS_API_ASPNETCORE_ENV:-Development}
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_HTTPS_PORT=44372
+      - ConnectionString=${MYESHOP_ORDERS_API_DB:-mongodb://document.data}
+      - DatabaseName=${MYESHOP_ORDERS_API_DATABASENAME:-ordersDb}
+      - CollectionName=${MYESHOP_ORDERS_API_COLLECTIONNAME:-ordersCollection}
+      - EventBusConnection=${MYESHOP_SERVICE_BUS:-rabbitmq}
+    ports:
+      - "51705:80"
+      - "44372:443"
+    volumes:
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+
+  catalog.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${MYESHOP_CATALOG_API_ASPNETCORE_ENV:-Development}
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_HTTPS_PORT=44336
+      - ConnectionString=${MYESHOP_CATALOG_API_DB:-Server=sql.data;Database=CatalogDb;User=sa;Password=Pass@word}
+      - EventBusConnection=${MYESHOP_SERVICE_BUS:-rabbitmq}
+    ports:
+      - "51712:80"
+      - "44336:443"
+    volumes:
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
