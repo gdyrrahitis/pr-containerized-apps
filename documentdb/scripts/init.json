@@ -1,0 +1,16 @@
+[
+  {
+    "total": 90.98,
+    "items": 2,
+    "orderItems": [
+      {
+        "item": "Amazon Echo",
+        "price": 79.99
+      },
+      {
+        "item": "keyboard",
+        "price": 10.99
+      }
+    ]
+  }
+]

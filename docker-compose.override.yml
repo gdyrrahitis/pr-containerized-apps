@@ -1,47 +1,52 @@
 version: '3.4'
 
 services:
-#  orders.api:
-#    environment:
-#      - ASPNETCORE_ENVIRONMENT=Development
-#      - ASPNETCORE_URLS=https://+:443;http://+:80
-#      - ASPNETCORE_HTTPS_PORT=44372
-#      - MongoConnectionString=${MYESHOP_ORDERS_API_DB:-mongodb://localhost:27017}
-#      - MongoDatabase=OrderingDb
-#    ports:
-#      - "51705:80"
-#      - "44372:443"
-#    volumes:
-#      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
-#      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-  catalog.api:
+  orders.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443;http://+:80
-      - ASPNETCORE_HTTPS_PORT=44336
-      - ConnectionString=${MYESHOP_CATALOG_API_DB:-Server=sql.data;Database=CatalogDb;User=sa;Password=Pass@word}
+      - ASPNETCORE_HTTPS_PORT=44372
+      - ConnectionString=${MYESHOP_ORDERS_API_DB:-mongodb://document.data}
+      - DatabaseName=ordersDb
+      - CollectionName=ordersCollection
     ports:
-      - "51712:80"
-      - "44336:443"
+      - "51705:80"
+      - "44372:443"
     volumes:
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+#  catalog.api:
+#    environment:
+#      - ASPNETCORE_ENVIRONMENT=Development
+#      - ASPNETCORE_URLS=https://+:443;http://+:80
+#      - ASPNETCORE_HTTPS_PORT=44336
+#      - ConnectionString=${MYESHOP_CATALOG_API_DB:-Server=sql.data;Database=CatalogDb;User=sa;Password=Pass@word}
+#    ports:
+#      - "51712:80"
+#      - "44336:443"
+#    volumes:
+#      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+#      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
 
-  sql.data:
-    environment:
-      - SA_PASSWORD=Pass@word
-      - ACCEPT_EULA=Y
-    ports:
-      - "5433:1433"
+#  sql.data:
+#    environment:
+#      - SA_PASSWORD=Pass@word
+#      - ACCEPT_EULA=Y
+#    ports:
+#      - "5433:1433"
+#    volumes:
+#      - /var/opt/mssql
+#      - ./db/sql:/usr/config
+#    tty: true
+
+  document.data:
+    restart: always
+    command: --smallfiles
     volumes:
-      - /var/opt/mssql
-      - ./db/sql:/usr/config
-    tty: true
-
-  # document.data:
-  #   restart: always
-  #   environment:
-  #     - MONGO_INITDB_ROOT_USERNAME=root
-  #     - MONGO_INITDB_ROOT_PASSWORD=example
-  #   ports:
-  #     - "27018:27018"
+      - "./documentdb/:/docker-entrypoint-initdb.d/"
+    environment:
+      - MONGO_INITDB_DATABASE=ordersDb
+#      - MONGO_INITDB_ROOT_USERNAME=root
+#      - MONGO_INITDB_ROOT_PASSWORD=example
+    ports:
+      - "27019:27017"

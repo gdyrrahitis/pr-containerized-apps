@@ -15,7 +15,7 @@ namespace Catalog.API
             WebHost.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
-                    config.AddEnvironmentVariables(prefix: "MYESHOP_");
+                    config.AddEnvironmentVariables();
                 })
                 .UseStartup<Startup>();
     }

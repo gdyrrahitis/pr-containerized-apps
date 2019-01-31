@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo 'start mongodb process'
+#/usr/bin/mongod & ./setup-db.sh & bash
+mongoimport --host=127.0.0.1 --port 27019 --db ordersDb --collection ordersCollection --drop --type json --file /init.json --jsonArray
+echo "imported json..."
+
+#echo "Creating mongo users..."
+#mongo admin --host localhost -u root -p example --authenticationDatabase admin --eval "db.createUser({user: 'ANOTHER_USER', pwd: 'PASS', roles: [{role: 'readWrite', db: 'xxx'}]}); db.createUser({user: 'admin', pwd: 'PASS', roles: [{role: 'userAdminAnyDatabase', db: 'admin'}]});"
+#echo "Mongo users created."
