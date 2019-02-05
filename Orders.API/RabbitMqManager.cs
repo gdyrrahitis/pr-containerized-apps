@@ -55,6 +55,9 @@ namespace Orders.API
 
             _channel.QueueDeclare(queue: OrderStatusChangedToAwaitingQueue, durable: false, exclusive: false, autoDelete: false, arguments: null);
             _channel.QueueBind(OrderStatusChangedToAwaitingQueue, exchange: ExchangeStatusAwaiting, routingKey: "");
+
+            ListenForOrderStockConfirmedEvent();
+            ListenForOrderStockRejectedEvent();
         }
 
         public void Disconnect() => Dispose();

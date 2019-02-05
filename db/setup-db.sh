@@ -6,7 +6,7 @@ password=Pass@word
 # wait for SQL Server to come up
 echo 'importing data will start in $wait_time...'
 sleep $wait_time
-echo 'importing data...'
+echo 'importing data...' 
 
 echo 'executing init.sql'
 # run the init script to create the DB and required table

@@ -23,8 +23,7 @@ namespace Catalog.API
                 var options = s.GetService<IOptions<EnvironmentConfiguration>>();
                 var connectionFactory = new ConnectionFactory()
                 {
-                    HostName = "",
-                    Port = 1
+                    HostName = options.Value.EventBusConnection
                 };
                 return new RabbitMqManager(connectionFactory, options);
             });
