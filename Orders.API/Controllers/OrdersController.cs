@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
@@ -11,12 +12,14 @@ namespace Orders.API.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly IMongoCollection<Order> _ordersCollection;
+        private readonly IRabbitMqManager _manager;
 
-        public OrdersController(IOptions<EnvironmentConfiguration> options)
+        public OrdersController(IOptions<EnvironmentConfiguration> options, IRabbitMqManager manager)
         {
             var client = new MongoClient(options.Value.ConnectionString);
             var database = client.GetDatabase(options.Value.DatabaseName);
             _ordersCollection = database.GetCollection<Order>(options.Value.CollectionName);
+            _manager = manager;
         }
 
         [HttpGet]
@@ -25,11 +28,24 @@ namespace Orders.API.Controllers
             return Ok(_ordersCollection.Find(o => true).ToList());
         }
 
-        [HttpGet("{id}")]
-        public IActionResult Get(string id)
+        [HttpGet("{orderId}")]
+        public IActionResult Get(Guid orderId)
         {
-            var order = _ordersCollection.Find(o => o.Id == id).FirstOrDefault();
-            return order != null ? (IActionResult) Ok(order): NotFound();
+            var order = _ordersCollection.Find(o => o.OrderId == orderId).FirstOrDefault();
+            return order != null ? (IActionResult)Ok(order) : NotFound();
+        }
+
+        // For demo
+        [HttpPost("{orderId}")]
+        public IActionResult Post([FromQuery] Guid orderId)
+        {
+            var order = _ordersCollection.Find(o => o.OrderId == orderId).FirstOrDefault();
+            if (order == null)
+            {
+                return NotFound();
+            }
+            _manager.SendOrderStatusChangedToAwaitingValidationIntegrationEvent(order.OrderId, order.OrderItems);
+            return Ok();
         }
     }
 }
