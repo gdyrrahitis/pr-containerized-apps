@@ -25,7 +25,8 @@ CREATE TABLE [dbo].[Catalog] (
 	Id int identity(1,1) not null,
 	CatalogItemId uniqueidentifier not null,
 	Name varchar(100) not null,
-	Price money not null
+	Price money not null,
+	AvailableStock int not null
 );
 GO
 

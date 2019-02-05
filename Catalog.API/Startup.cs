@@ -4,21 +4,30 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using RabbitMQ.Client;
 
 namespace Catalog.API
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        public Startup(IConfiguration configuration) => Configuration = configuration;
 
         public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<EnvironmentConfiguration>(Configuration);
+            services.AddSingleton<IRabbitMqManager>(s =>
+            {
+                var options = s.GetService<IOptions<EnvironmentConfiguration>>();
+                var connectionFactory = new ConnectionFactory()
+                {
+                    HostName = "",
+                    Port = 1
+                };
+                return new RabbitMqManager(connectionFactory, options);
+            });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
@@ -36,5 +45,22 @@ namespace Catalog.API
             app.UseHttpsRedirection();
             app.UseMvc();
         }
+    }
+
+    public static class ApplicationBuilderExtensions {
+        public static IRabbitMqManager Listener { get; set; }
+
+        public static IApplicationBuilder UseRabbitListener(this IApplicationBuilder app)
+        {
+            Listener = app.ApplicationServices.GetService<IRabbitMqManager>();
+            var life = app.ApplicationServices.GetService<IApplicationLifetime>();
+            life.ApplicationStarted.Register(OnStarted);
+            life.ApplicationStopping.Register(OnStopping);
+            return app;
+        }
+
+        private static void OnStarted() => Listener.CreateConsumerChannel();
+
+        private static void OnStopping() => Listener.Disconnect();
     }
 }

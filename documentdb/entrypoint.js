@@ -6,11 +6,13 @@ const orders = [
         "buyerName": "George Dyrrachitis",
         "orderItems": [
             {
+                "productId": "2447a589-86b6-4895-a416-bbdddf398a53",
                 "item": "Amazon Echo",
                 "price": 79.99,
                 "units": 1
             },
             {
+                "productId": "d3b9d9ca-e05b-4984-bae2-a668e06eb6ae",
                 "item": "keyboard",
                 "price": 10.99,
                 "units": 1
