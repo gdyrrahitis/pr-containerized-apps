@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Catalog.API.Infrastructure.IntegrationEvents
+namespace Orders.API.Infrastructure.IntegrationEvents
 {
     public class OrderStockConfirmedIntegrationEvent
     {

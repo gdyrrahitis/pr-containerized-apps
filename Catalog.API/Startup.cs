@@ -42,6 +42,7 @@ namespace Catalog.API
                 app.UseHsts();
             }
 
+            app.UseRabbitListener();
             app.UseHttpsRedirection();
             app.UseMvc();
         }

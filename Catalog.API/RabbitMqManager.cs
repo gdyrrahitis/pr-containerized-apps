@@ -22,7 +22,9 @@ namespace Catalog.API
 
     public class RabbitMqManager : IRabbitMqManager, IDisposable
     {
-        const string Exchange = "eshop.exchange";
+        const string ExchangeStatusAwaiting = "eshop.exchange";
+        const string ExchangeStockRejected = "eshop.exchange.stock.rejected";
+        const string ExchangeStockConfirmed = "eshop.exchange.stock.confirmed";
         const string OrderStatusChangedToAwaitingQueue = "eshop.queue.status.awaiting";
         const string OrderStockRejectedQueue = "eshop.queue.order.stock.rejected";
         const string OrderStockConfirmedQueue = "eshop.queue.order.stock.confirmed";
@@ -64,7 +66,7 @@ namespace Catalog.API
             var properties = _channel.CreateBasicProperties();
             properties.ContentType = "application/json";
 
-            _channel.BasicPublish(Exchange, routingKey: "",
+            _channel.BasicPublish(ExchangeStockRejected, routingKey: "",
                 basicProperties: properties, body: Encoding.UTF8.GetBytes(serializedCommand));
         }
 
@@ -78,7 +80,7 @@ namespace Catalog.API
             var properties = _channel.CreateBasicProperties();
             properties.ContentType = "application/json";
 
-            _channel.BasicPublish(Exchange, routingKey: "",
+            _channel.BasicPublish(ExchangeStockConfirmed, routingKey: "",
                 basicProperties: properties, body: Encoding.UTF8.GetBytes(serializedCommand));
         }
 
@@ -87,14 +89,16 @@ namespace Catalog.API
             _channel.QueueDeclare(queue: OrderStatusChangedToAwaitingQueue, durable: false, exclusive: false, autoDelete: false, arguments: null);
             _channel.BasicQos(prefetchCount: 1, prefetchSize: 0, global: false);
 
-            _channel.ExchangeDeclare(Exchange, ExchangeType.Direct);
+            _channel.ExchangeDeclare(ExchangeStatusAwaiting, ExchangeType.Direct);
+            _channel.ExchangeDeclare(ExchangeStockRejected, ExchangeType.Direct);
+            _channel.ExchangeDeclare(ExchangeStockConfirmed, ExchangeType.Direct);
             _channel.QueueDeclare(OrderStockRejectedQueue, durable: false, exclusive: false,
                 autoDelete: false, arguments: null);
-            _channel.QueueBind(OrderStockRejectedQueue, exchange: Exchange, routingKey: "");
+            _channel.QueueBind(OrderStockRejectedQueue, exchange: ExchangeStockRejected, routingKey: "");
 
             _channel.QueueDeclare(OrderStockConfirmedQueue, durable: false, exclusive: false,
                 autoDelete: false, arguments: null);
-            _channel.QueueBind(OrderStockConfirmedQueue, exchange: Exchange, routingKey: "");
+            _channel.QueueBind(OrderStockConfirmedQueue, exchange: ExchangeStockConfirmed, routingKey: "");
 
             ListenForOrderStatusChangedToAwaitingValidationEvent();
         }

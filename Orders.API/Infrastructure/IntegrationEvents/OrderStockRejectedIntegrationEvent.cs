@@ -1,8 +1,8 @@
-﻿using Catalog.API.Models;
+﻿using Orders.API.Models;
 using System;
 using System.Collections.Generic;
 
-namespace Catalog.API.Infrastructure.IntegrationEvents
+namespace Orders.API.Infrastructure.IntegrationEvents
 {
     public class OrderStockRejectedIntegrationEvent
     {
