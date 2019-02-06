@@ -12,7 +12,7 @@ namespace Orders.API.Models
         public string Id { get; set; }
 
         [BsonElement("orderId")]
-        public Guid OrderId { get; set; }
+        public string OrderId { get; set; }
 
         [BsonElement("total")]
         public decimal Total { get; set; }

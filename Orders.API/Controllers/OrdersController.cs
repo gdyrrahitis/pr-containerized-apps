@@ -28,24 +28,29 @@ namespace Orders.API.Controllers
             return Ok(_ordersCollection.Find(o => true).ToList());
         }
 
-        [HttpGet("{orderId}")]
-        public IActionResult Get(Guid orderId)
+        [HttpGet("{id}")]
+        public IActionResult Get(string id)
         {
-            var order = _ordersCollection.Find(o => o.OrderId == orderId).FirstOrDefault();
+            var order = _ordersCollection.Find(o => o.Id == id).FirstOrDefault();
             return order != null ? (IActionResult)Ok(order) : NotFound();
         }
 
         // For demo
-        [HttpPost("{orderId}")]
-        public IActionResult Post([FromQuery] Guid orderId)
+        [HttpPost]
+        public IActionResult Post([FromBody] OrderStatusRequest request)
         {
-            var order = _ordersCollection.Find(o => o.OrderId == orderId).FirstOrDefault();
+            var order = _ordersCollection.Find(o => o.OrderId == request.Id).FirstOrDefault();
             if (order == null)
             {
                 return NotFound();
             }
-            _manager.SendOrderStatusChangedToAwaitingValidationIntegrationEvent(order.OrderId, order.OrderItems);
+            _manager.SendOrderStatusChangedToAwaitingValidationIntegrationEvent(Guid.Parse(order.OrderId), order.OrderItems);
             return Ok();
         }
+    }
+
+    public class OrderStatusRequest
+    {
+        public string Id { get; set; }
     }
 }

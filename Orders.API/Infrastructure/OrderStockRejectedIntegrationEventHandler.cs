@@ -43,7 +43,7 @@ namespace Orders.API.Infrastructure
             var database = client.GetDatabase(_options.Value.DatabaseName);
             var ordersCollection = database.GetCollection<Order>(_options.Value.CollectionName);
 
-            var order = ordersCollection.Find(o => o.OrderId == command.OrderId).FirstOrDefault();
+            var order = ordersCollection.Find(o => o.OrderId == command.OrderId.ToString("N")).FirstOrDefault();
             if (order == null)
             {
                 throw new Exception($"Cannot find order with id {command.OrderId}");
